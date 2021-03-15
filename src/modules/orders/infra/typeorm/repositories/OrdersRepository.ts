@@ -11,11 +11,21 @@ class OrdersRepository implements IOrdersRepository {
     this.ormRepository = getRepository(Order);
   }
 
-  public async create({ customer, products }: ICreateOrderDTO): Promise<Order> {
-    // TODO
+  public async create({
+    customer,
+    products: order_products,
+  }: ICreateOrderDTO): Promise<Order> {
+    const order = this.ormRepository.create({
+      customer,
+      order_products,
+    });
+
+    await this.ormRepository.save(order);
+
+    return order;
   }
 
-  public async findById(id: string): Promise<Order | undefined> {
+  public async findById(id: string): Promise<void> {
     // TODO
   }
 }
