@@ -45,6 +45,10 @@ class CreateOrderService {
         throw new AppError('Product not found', 400);
       }
 
+      if (foundedProduct.quantity > product.quantity) {
+        throw new AppError('Insufficient amount of product', 400);
+      }
+
       return {
         product_id: product.id,
         price: product.price,
