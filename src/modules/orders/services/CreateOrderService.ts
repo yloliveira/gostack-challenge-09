@@ -35,11 +35,24 @@ class CreateOrderService {
     }
 
     const findAllProducts = await this.productsRepository.findAllById(products);
-    const productsToAdd = findAllProducts.map(product => ({
-      product_id: product.id,
-      price: product.price,
-      quantity: Number(products.find(({ id }) => id === product.id)?.quantity),
-    }));
+
+    if (!findAllProducts.length) {
+      throw new AppError('Products not found', 400);
+    }
+    const productsToAdd = findAllProducts.map(product => {
+      const foundedProduct = products.find(p => p.id === product.id);
+      if (!foundedProduct) {
+        throw new AppError('Product not found', 400);
+      }
+
+      return {
+        product_id: product.id,
+        price: product.price,
+        quantity: Number(
+          products.find(({ id }) => id === product.id)?.quantity,
+        ),
+      };
+    });
 
     return this.ordersRepository.create({ customer, products: productsToAdd });
   }
