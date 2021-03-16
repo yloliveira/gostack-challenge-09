@@ -53,22 +53,21 @@ class CreateOrderService {
       if (!foundedProduct) {
         throw new AppError('Product not found', 400);
       }
-
       if (foundedProduct.quantity > product.quantity) {
         throw new AppError('Insufficient amount of product', 400);
       }
 
+      const orderProductQuantity = foundedProduct.quantity;
+      const newProductQuantity = product.quantity - orderProductQuantity;
+
       productsToUpdate.push({
         id: product.id,
-        quantity: Number(product.quantity - foundedProduct.quantity),
+        quantity: newProductQuantity,
       });
-
       productsToAdd.push({
         product_id: product.id,
         price: product.price,
-        quantity: Number(
-          products.find(({ id }) => id === product.id)?.quantity,
-        ),
+        quantity: orderProductQuantity,
       });
     });
 
